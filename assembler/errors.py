@@ -12,89 +12,89 @@ ERR_SYNTAX = (1000, "Syntax errors in source file")
 ERR_ASSEMBLE = (1001, "Assembler errors in source file")
 
 class AssemblyError(Exception):
-  def __init__(self, info = None):
-    self.info = info
+    def __init__(self, info = None):
+        self.info = info
 
-  def __str__(self):
-    if self.__doc__ is not None:
-      try:
-        return self.__doc__ % self.info
-      except:
-        return self.__doc__
-    else:
-      return str(self.info)
+    def __str__(self):
+        if self.__doc__ is not None:
+            try:
+                return self.__doc__ % self.info
+            except:
+                return self.__doc__
+        else:
+            return str(self.info)
 
-  def __cmp__(self, another):
-    return cmp(self.__str__(), another.__str__())
+    def __cmp__(self, another):
+        return cmp(self.__str__(), another.__str__())
 
 class MissingOperationError(AssemblyError):
-  """Syntax error, operation missing"""
+    """Syntax error, operation missing"""
 
 class InvalidLabelError(AssemblyError):
-  """Invalid label name (%s)"""
+    """Invalid label name (%s)"""
 
 class TooLongLabelError(AssemblyError):
-  """Too long label name (%s)"""
+    """Too long label name (%s)"""
 
 class UnknownOperationError(AssemblyError):
-  """Unknown operation (%s)"""
+    """Unknown operation (%s)"""
 
 class RepeatedLabelError(AssemblyError):
-  """This label name used twice (%s)"""
+    """This label name used twice (%s)"""
 
 class LineNumberError(AssemblyError):
-  """This address (%s) is invalid in MIX computer"""
+    """This address (%s) is invalid in MIX computer"""
 
 class NoEndError(AssemblyError):
-  """Required operation (END) wasn't found"""
+    """Required operation (END) wasn't found"""
 
 class InvalidLocalLabelError(AssemblyError):
-  """Invalid local label (%s) (no dH label found)"""
+    """Invalid local label (%s) (no dH label found)"""
 
 class ArgumentRequiredError(AssemblyError):
-  """Argument required for this operation (%s)"""
+    """Argument required for this operation (%s)"""
 
 class UnquotedStringError(AssemblyError):
-  """Unqouted string (%s)"""
+    """Unqouted string (%s)"""
 
 class InvalidCharError(AssemblyError):
-  """This char is invalid in MIX computer (%s)"""
+    """This char is invalid in MIX computer (%s)"""
 
 class ExpectedSExpError(AssemblyError):
-  """Expected correct simple expression after '%s'"""
+    """Expected correct simple expression after '%s'"""
 
 class ExpectedExpError(AssemblyError):
-  """Expected correct expression after '%s'"""
+    """Expected correct expression after '%s'"""
 
 class NoClosedBracketError(AssemblyError):
-  """Expected closing bracket after '%s'"""
+    """Expected closing bracket after '%s'"""
 
 class NoEqualSignError(AssemblyError):
-  """Expected equal sign after '%s'"""
+    """Expected equal sign after '%s'"""
 
 class InvalidFieldSpecError(AssemblyError):
-  """Invalid field specification (%s)"""
+    """Invalid field specification (%s)"""
 
 class InvalidIndError(AssemblyError):
-  """Invalid index (%s)"""
+    """Invalid index (%s)"""
 
 class InvalidAddrError(AssemblyError):
-  """Invalid address (%s)"""
+    """Invalid address (%s)"""
 
 class ExpectedWExpError(AssemblyError):
-  """Expected correct W-expression (%s)"""
+    """Expected correct W-expression (%s)"""
 
 class UnexpectedStrInTheEndError(AssemblyError):
-  """Unexpected string in the end of argument (%s)"""
+    """Unexpected string in the end of argument (%s)"""
 
 class TooLongLiteralError(AssemblyError):
-  """Too long literal expression, must be shorter than 10 digits (%s)"""
+    """Too long literal expression, must be shorter than 10 digits (%s)"""
 
 class NoFreeSpaceForLiteralsError(AssemblyError):
-  """After END there are no memory to store all literals"""
+    """After END there are no memory to store all literals"""
 
 class FieldFixedError(AssemblyError):
-  """Field part for this instruction is fixed (%s), can't be changed"""
+    """Field part for this instruction is fixed (%s), can't be changed"""
 
 class RepeatedCellError(AssemblyError):
-  """Can't assemble to one memory cell twice (%s)"""
+    """Can't assemble to one memory cell twice (%s)"""

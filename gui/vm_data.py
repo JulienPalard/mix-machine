@@ -9,48 +9,48 @@ from virt_machine import *
 import vm_errors
 
 class VMData:
-  def __init__(self, asm_data):
-    self.vm = VMachine(asm_data.mem_list, asm_data.start_addr)
-    self.listing = asm_data.listing
+    def __init__(self, asm_data):
+        self.vm = VMachine(asm_data.mem_list, asm_data.start_addr)
+        self.listing = asm_data.listing
 
-    err_dict = vm_errors.__dict__
-    self.vm_errors = map(
-        lambda x : err_dict[x],
-        [item for item in err_dict.keys() if item[-5:] == "Error"]
-    )
+        err_dict = vm_errors.__dict__
+        self.vm_errors = map(
+                lambda x : err_dict[x],
+                [item for item in err_dict.keys() if item[-5:] == "Error"]
+        )
 
-  def mem(self, addr):
-    return self.vm[addr]
+    def mem(self, addr):
+        return self.vm[addr]
 
-  def setMem(self, addr, word):
-    self.vm[addr] = word
+    def setMem(self, addr, word):
+        self.vm[addr] = word
 
-  def ca(self):
-    return self.vm.cur_addr
+    def ca(self):
+        return self.vm.cur_addr
 
-  def cycles(self):
-    return self.vm.cycles
+    def cycles(self):
+        return self.vm.cycles
 
-  def halted(self):
-    return self.vm.halted
+    def halted(self):
+        return self.vm.halted
 
-  def step(self):
-    self.vm.step()
+    def step(self):
+        self.vm.step()
 
-  def is_readable(self, addr):
-    return self.vm.is_readable(addr)
+    def is_readable(self, addr):
+        return self.vm.is_readable(addr)
 
-  def is_writeable(self, addr):
-    return self.vm.is_writeable(addr)
+    def is_writeable(self, addr):
+        return self.vm.is_writeable(addr)
 
-  def setCPUHook(self, hook):
-    self.vm.set_cpu_hook(hook)
+    def setCPUHook(self, hook):
+        self.vm.set_cpu_hook(hook)
 
-  def setMemHook(self, hook):
-    self.vm.set_mem_hook(hook)
+    def setMemHook(self, hook):
+        self.vm.set_mem_hook(hook)
 
-  def setLockHook(self, hook):
-    self.vm.set_lock_hook(hook)
+    def setLockHook(self, hook):
+        self.vm.set_lock_hook(hook)
 
-  def addDevice(self, number, device):
-    self.vm.set_device(number, device)
+    def addDevice(self, number, device):
+        self.vm.set_device(number, device)

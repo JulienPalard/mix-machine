@@ -6,18 +6,18 @@ from exec_io import _get_device
 from word_parser import *
 
 def _j(vmachine, condition, save_j = True, reset_of = False):
-  vmachine["cycles"] += 1
+    vmachine["cycles"] += 1
 
-  if not condition(vmachine):
-    return
+    if not condition(vmachine):
+        return
 
-  if reset_of:
-    vmachine["of"] = False
+    if reset_of:
+        vmachine["of"] = False
 
-  if save_j:
-    vmachine["J":4:5] = vmachine.cur_addr + 1
+    if save_j:
+        vmachine["J":4:5] = vmachine.cur_addr + 1
 
-  vmachine.jump_to = WordParser.get_full_addr(vmachine, check_mix_addr = True)
+    vmachine.jump_to = WordParser.get_full_addr(vmachine, check_mix_addr = True)
 
 
 def jbus(vmachine): _j(vmachine, lambda vm: _get_device(vmachine).busy == True)

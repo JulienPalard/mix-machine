@@ -12,30 +12,30 @@ ASM_SYNTAX_ERRORS =     1
 ASM_ASSEMBLER_ERRORS =  2
 
 class AsmData:
-  def __init__(self, mem_list, start_addr, listing, symtable, end_address):
-    self.mem_list = mem_list
-    self.start_addr = start_addr
-    self.listing = listing
-    self.symtable = symtable
-    self.end_address = end_address
+    def __init__(self, mem_list, start_addr, listing, symtable, end_address):
+        self.mem_list = mem_list
+        self.start_addr = start_addr
+        self.listing = listing
+        self.symtable = symtable
+        self.end_address = end_address
 
 def asm(text):
-  src_lines = text.splitlines()
+    src_lines = text.splitlines()
 
-  lines, errors = parse_lines(src_lines)
-  if len(errors) > 0: # we have errors
-    return (ASM_SYNTAX_ERRORS, errors)
+    lines, errors = parse_lines(src_lines)
+    if len(errors) > 0: # we have errors
+        return (ASM_SYNTAX_ERRORS, errors)
 
-  asm = Assembler()
-  asm.run(lines)
+    asm = Assembler()
+    asm.run(lines)
 
-  memory_list = asm.memory.memory
-  start_address = asm.start_address
-  errors = asm.errors
+    memory_list = asm.memory.memory
+    start_address = asm.start_address
+    errors = asm.errors
 
-  if len(errors) > 0: # we have errors
-    return (ASM_ASSEMBLER_ERRORS, errors)
+    if len(errors) > 0: # we have errors
+        return (ASM_ASSEMBLER_ERRORS, errors)
 
-  listing = Listing(src_lines, lines, memory_list, asm.symtable.literals, asm.end_address)
+    listing = Listing(src_lines, lines, memory_list, asm.symtable.literals, asm.end_address)
 
-  return (ASM_NO_ERRORS, AsmData(memory_list, start_address, listing, asm.symtable, asm.end_address))
+    return (ASM_NO_ERRORS, AsmData(memory_list, start_address, listing, asm.symtable, asm.end_address))

@@ -1,44 +1,44 @@
 class VMTestingError(Exception):
-  pass
+    pass
 
 class InvalidAddress(VMTestingError):
-  pass
+    pass
 
 class InvalidIndex(VMTestingError):
-  pass
+    pass
 
 class InvalidFieldSpec(VMTestingError):
-  pass
+    pass
 
 class UnknownInstruction(VMTestingError):
-  pass
+    pass
 
 class InvalidCA(VMTestingError):
-  pass
+    pass
 
 class NegativeShift(VMTestingError):
-  pass
+    pass
 
 class InvalidMove(VMTestingError):
-  pass
+    pass
 
 class InvalidDevice(VMTestingError):
-  pass
+    pass
 
 class UnsupportedDeviceMode(VMTestingError):
-  pass
+    pass
 
 class InvalidChar(VMTestingError):
-  pass
+    pass
 
 class InvalidCharCode(VMTestingError):
-  pass
+    pass
 
 class IOMemRange(VMTestingError):
-  pass
+    pass
 
 class ReadLocked(VMTestingError):
-  pass
+    pass
 
 class WriteLocked(VMTestingError):
-  pass
+    pass

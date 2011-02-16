@@ -27,18 +27,18 @@ W_MODE = 'w'
 FILE_DEV = 0
 
 class VMTesting:
-    """ The main interface of abstract VM """
-    def __init__(self):
-        pass
+        """ The main interface of abstract VM """
+        def __init__(self):
+                pass
 
-    def execute(self, at = None, start = None):
-        """ Runs 1 command at "at", or from "start" to "HLT" instruction and returns number of elapsed cycles """
-        pass
+        def execute(self, at = None, start = None):
+                """ Runs 1 command at "at", or from "start" to "HLT" instruction and returns number of elapsed cycles """
+                pass
 
-    def load(self, mega, devs = {}):
-        """ Loads initial state of VM form MEGA hash """
-        pass
+        def load(self, mega, devs = {}):
+                """ Loads initial state of VM form MEGA hash """
+                pass
 
-    def state(self):
-        """ Returns state of VM in MEGA hash """
-        return {}
+        def state(self):
+                """ Returns state of VM in MEGA hash """
+                return {}
