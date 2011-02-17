@@ -6,40 +6,44 @@ from parse_argument import *
 from operations import *
 from errors import *
 
+
 class SymbolTable:
-    def __init__(self, labels = None, local_labels = None, literals = None):
+    def __init__(self, labels=None, local_labels=None, literals=None):
         self.literals = []     if literals     is None else literals
         self.labels = {}       if labels       is None else labels
         self.local_labels = {} if local_labels is None else local_labels
 
     @staticmethod
     def is_local_label(label):
-        return len(label) == 2 and label[0].isdigit() and label[1] in ('H', 'h')
+        return len(label) == 2 and label[0].isdigit() and \
+            label[1] in ('H', 'h')
 
     @staticmethod
     def is_local_label_reference(label):
-        return len(label) == 2 and label[0].isdigit() and label[1] in ('F', 'B', 'f', 'b')
-    
+        return len(label) == 2 and label[0].isdigit() and \
+            label[1] in ('F', 'B', 'f', 'b')
+
     @staticmethod
     def is_label(s):
         return s.isalnum() and any(ch.isalpha() for ch in s) and \
             not SymbolTable.is_local_label_reference(s)
-    
-    def set_label(self, label, address, lineno): 
+
+    def set_label(self, label, address, lineno):
         if label is None:
             return
-
         if SymbolTable.is_local_label(label):
-            self.local_labels.setdefault(label, []).append( (address, lineno) )
+            self.local_labels.setdefault(label, []).append((address, lineno))
         else:
             if label in self.labels:
                 raise RepeatedLabelError(label)
-            
             self.labels[label] = address
 
     def add_literal(self, value_and_sign):
-        """This is called on the 2nd pass from parse_argument. Returns an address for the value"""
-        self.literals.append(value_and_sign) 
+        """
+        This is called on the 2nd pass from parse_argument.
+        Returns an address for the value
+        """
+        self.literals.append(value_and_sign)
         self.literal_address += 1
         return self.literal_address - 1
 
