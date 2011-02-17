@@ -6,27 +6,30 @@ from parse_argument import *
 from operations import *
 from errors import *
 
-def is_local_label(label):
-    return len(label) == 2 and label[0].isdigit() and label[1] in ('H', 'h')
-
-def is_local_label_reference(label):
-    return len(label) == 2 and label[0].isdigit() and label[1] in ('F', 'B', 'f', 'b')
-
-def is_label(s):
-    return s.isalnum() and any(ch.isalpha() for ch in s) and \
-        not is_local_label_reference(s)
-
 class SymbolTable:
     def __init__(self, labels = None, local_labels = None, literals = None):
         self.literals = []     if literals     is None else literals
         self.labels = {}       if labels       is None else labels
         self.local_labels = {} if local_labels is None else local_labels
 
+    @staticmethod
+    def is_local_label(label):
+        return len(label) == 2 and label[0].isdigit() and label[1] in ('H', 'h')
+
+    @staticmethod
+    def is_local_label_reference(label):
+        return len(label) == 2 and label[0].isdigit() and label[1] in ('F', 'B', 'f', 'b')
+    
+    @staticmethod
+    def is_label(s):
+        return s.isalnum() and any(ch.isalpha() for ch in s) and \
+            not SymbolTable.is_local_label_reference(s)
+    
     def set_label(self, label, address, lineno): 
         if label is None:
             return
 
-        if is_local_label(label):
+        if SymbolTable.is_local_label(label):
             self.local_labels.setdefault(label, []).append( (address, lineno) )
         else:
             if label in self.labels:
@@ -46,7 +49,7 @@ class SymbolTable:
             return self.labels[label]
 
         # find in local_labels
-        if is_local_label_reference(label):
+        if SymbolTable.is_local_label_reference(label):
             local_label = label[0] + 'H'
             if local_label in self.local_labels:
                 b_label, f_label = None, None
@@ -68,7 +71,7 @@ class SymbolTable:
 
     def find_local_by_address(self, label, addr):
         """Used by disassembler"""
-        if is_local_label_reference(label):
+        if SymbolTable.is_local_label_reference(label):
             local_label = label[0] + 'H'
             if local_label in self.local_labels:
                 b_label, f_label = None, None

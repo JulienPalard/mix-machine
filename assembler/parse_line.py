@@ -4,7 +4,7 @@
 
 import operations
 from errors import *
-from symbol_table import *
+from symbol_table import SymbolTable
 
 class Line:
     def __init__(self, label, operation, argument, line_number = 0, asm_address = None):
@@ -79,7 +79,7 @@ def parse_line(text_line):
 
     # check label
     if label is not None:
-        if not is_label(label):
+        if not SymbolTable.is_label(label):
             raise InvalidLabelError(label)
         
         if len(label) > 10:
