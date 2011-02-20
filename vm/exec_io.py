@@ -5,6 +5,7 @@
 from word_parser import *
 from vm_errors import *
 
+
 def _get_device(vmachine):
     """Return device or raise exception"""
     try:
@@ -12,44 +13,47 @@ def _get_device(vmachine):
     except KeyError:
         raise InvalidDeviceError(WordParser.get_field(vmachine))
 
+
 def ioc(vmachine):
     vmachine["cycles"] += 1
-    
     dev = _get_device(vmachine)
-    
     if dev.busy:
         vmachine.jump_to = vmachine.cur_addr
     else:
         dev.control()
 
+
 def _in_out(vmachine):
     """Common stuff for IN and OUT"""
     vmachine.cycles += 1
     dev = _get_device(vmachine)
-    addr = WordParser.get_full_addr(vmachine, check_mix_addr = True)
-    words_num = dev.block_size/5
+    addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
+    words_num = dev.block_size / 5
     if not vmachine.check_mem_addr(addr + words_num - 1):
-        raise IOMemRangeError( (words_num, addr, addr + words_num - 1) )
+        raise IOMemRangeError((words_num, addr, addr + words_num - 1))
     return (dev, addr, words_num)
+
 
 def in_(vmachine):
     dev, addr, words_num = _in_out(vmachine)
-
     if dev.busy:
         vmachine.jump_to = vmachine.cur_addr
         return
 
     # check if region is writeable
-    if not vmachine.is_writeable_set(set(  range(addr, addr + words_num)  )):
-        raise MemWriteLockedError( (addr, addr + words_num - 1) )
+    if not vmachine.is_writeable_set(set(range(addr, addr + words_num))):
+        raise MemWriteLockedError((addr, addr + words_num - 1))
 
     # read bytes
     bytes = dev.read((addr, addr + words_num - 1))
     # write them to memory
     for i in xrange(words_num):
-        vmachine[(addr + i):1:5] = [+1] + bytes[5*i: 5*(i + 1)] # +1 added like a sign to word
+        # +1 added like a sign to word
+        vmachine[(addr + i):1:5] = [+1] + bytes[5 * i: 5 * (i + 1)]
     # and lock memory for any actions
-    vmachine.lock_cells(vmachine.RW_LOCKED, add = set(range( addr, addr + words_num )))
+    vmachine.lock_cells(vmachine.RW_LOCKED,
+                        add=set(range(addr, addr + words_num)))
+
 
 def out(vmachine):
     dev, addr, words_num = _in_out(vmachine)
@@ -59,8 +63,8 @@ def out(vmachine):
         return
 
     # check if region is readable
-    if not vmachine.is_readable_set(set(  range(addr, addr + words_num)  )):
-        raise MemReadLockedError( (addr, addr + words_num - 1) )
+    if not vmachine.is_readable_set(set(range(addr, addr + words_num))):
+        raise MemReadLockedError((addr, addr + words_num - 1))
 
     # get bytes list from memory
     bytes = []
@@ -69,4 +73,5 @@ def out(vmachine):
     # write them to file
     dev.write(bytes, (addr, addr + words_num - 1))
     # and lock memory for writing (any instructions can read this memory)
-    vmachine.lock_cells(vmachine.W_LOCKED, add = set(range( addr, addr + words_num )))
+    vmachine.lock_cells(vmachine.W_LOCKED,
+                        add=set(range(addr, addr + words_num)))

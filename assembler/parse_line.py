@@ -6,23 +6,29 @@ import operations
 from errors import *
 from symbol_table import SymbolTable
 
+
 class Line:
-    def __init__(self, label, operation, argument, line_number = 0, asm_address = None):
-        self.label, self.operation, self.argument, self.line_number = label, operation, argument, line_number
+    def __init__(self, label, operation, argument, line_number=0,
+                 asm_address=None):
+        self.label, self.operation, self.argument, self.line_number = label, \
+            operation, argument, line_number
         self.asm_address = asm_address
 
     def __str__(self):
-        return "%3i: (%10s) %4s %s" % (self.line_number, self.label, self.operation, self.argument)
+        return "%3i: (%10s) %4s %s" % (self.line_number, self.label,
+                                       self.operation, self.argument)
 
     def __cmp__(self, another):
         """ Mostly needed for tests """
         return cmp(self.__str__(), another.__str__())
+
 
 def find_first_not_space(line, index):
     for char in line[index:]:
         if not char.isspace():
             return char
     return None
+
 
 def split_line(line):
     has_label = len(line) > 0 and not line[0].isspace()
@@ -36,11 +42,12 @@ def split_line(line):
                 words.append(word)
                 word = ''
                 # check if operation is ALF
-                if len(words) == (2 if has_label else 1) and words[-1] == 'ALF':
+                if len(words) == (2 if has_label else 1) \
+                        and words[-1] == 'ALF':
                     if find_first_not_space(line, i + 1) == '"':
-                        words.append(line[ line.find('"', i + 1) :])
+                        words.append(line[line.find('"', i + 1):])
                     else:
-                        words.append(line[ i + 1 :])
+                        words.append(line[i + 1:])
                     return words
         else:
             if line[i] == '"':
@@ -56,55 +63,46 @@ def split_line(line):
         words.append(word)
     return words
 
+
 # returns Line object or None if text_line is empty or comment line
 def parse_line(text_line):
     words = split_line(text_line.upper())
-
     # empty line or comment line
     if len(words) == 0 or text_line[0] == '*':
         return None
-
     # line without a label
     if text_line[0].isspace():
         words.insert(0, None)
-
     if len(words) < 2:
         raise MissingOperationError
-
     # line without an operand
     if len(words) < 3:
         words.append(None)
-
     label, operation, argument = words[0:3]
-
     # check label
     if label is not None:
         if not SymbolTable.is_label(label):
             raise InvalidLabelError(label)
-        
         if len(label) > 10:
             raise TooLongLabelError(label)
-      
-    # check operation 
+     # check operation
     if not operations.is_valid_operation(operation):
         raise UnknownOperationError(operation)
-    
-    # check arg for directives
+     # check arg for directives
     if operations.is_arg_required(operation) and argument is None:
         raise ArgumentRequiredError(operation)
-
     return Line(label, operation, argument)
+
 
 def parse_lines(lines):
     errors = []           # array for (line_numbers, error_messages)
     result = []
-
     has_end = False
     for i in xrange(len(lines)):
         try:
             line = parse_line(lines[i])
         except AssemblyError, error:
-            errors.append( (i + 1, error) )
+            errors.append((i + 1, error))
         else:
             if line is not None:
                 line.line_number = i + 1
@@ -112,8 +110,6 @@ def parse_lines(lines):
                 if line.operation == "END":
                     has_end = True
                     break
-
     if not has_end:
-        errors.append( (len(lines), NoEndError()) )
-
+        errors.append((len(lines), NoEndError()))
     return (result, errors)

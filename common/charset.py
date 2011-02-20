@@ -14,15 +14,18 @@ ord_table = {
         ".":  40,     ",":  41,     "(":  42,     ")":  43,
         "+":  44,     "-":  45,     "*":  46,     "/":  47,
         "=":  48,     "$":  49,     "<":  50,     ">":  51,
-        "@":  52,     ";":  53,     ":":  54,     "'":  55
-}
-chr_table = [x for x in " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:'"]
+        "@":  52,     ";":  53,     ":":  54,     "'":  55}
+
+chr_table = [x for x in
+             " ABCDEFGHI~JKLMNOPQR[#STUVWXYZ0123456789.,()+-*/=$<>@;:'"]
 charset_len = len(chr_table)
 
-def ord(char, default = None):
+
+def ord(char, default=None):
     """Char -> Int"""
     return ord_table.get(char, default)
 
-def chr(num, default = None):
+
+def chr(num, default=None):
     """Int -> Char"""
     return chr_table[num] if 0 <= num < charset_len else default

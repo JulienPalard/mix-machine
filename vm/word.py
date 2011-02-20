@@ -1,6 +1,8 @@
 from vm_errors import *
 
+
 MAX_BYTE = 64
+
 
 class Word:
     @staticmethod
@@ -11,20 +13,24 @@ class Word:
     def from_dec(num):
         mask = MAX_BYTE - 1  # 1<<6 - 1
         u_num = abs(num)
-        return [Word.sign(num)] + [ int((u_num >> shift) & mask) for shift in xrange(24, -1, -6) ] # 24 = 6 * (5-1)
+        # 24 = 6 * (5-1)
+        return [Word.sign(num)] + [int((u_num >> shift) & mask)
+                                   for shift in xrange(24, -1, -6)]
 
     @staticmethod
     def norm_2bytes(addr):
-        return Word.sign(addr) * (abs(addr) % MAX_BYTE**2)
+        return Word.sign(addr) * (abs(addr) % MAX_BYTE ** 2)
 
     def __int__(self):
-        return self.word_list[0] * reduce(lambda x,y: (x << 6) | y, self.word_list[1:], 0)
+        return self.word_list[0] \
+            * reduce(lambda x, y: (x << 6) | y, self.word_list[1:], 0)
 
     @staticmethod
     def is_word_list(word_list):
-        return  len(word_list) == 6\
-                        and word_list[0] in (1, -1)\
-                        and all([ 0 <= byte < MAX_BYTE for byte in word_list[1:6]])
+        return  len(word_list) == 6 \
+            and word_list[0] in (1, -1) \
+            and all([0 <= byte < MAX_BYTE \
+                         for byte in word_list[1:6]])
 
     def __getitem__(self, x):
         return self.word_list[x]
@@ -38,7 +44,7 @@ class Word:
         new = Word()
         if l == 0:
             new[0] = self[0]
-        for i in xrange(r, max(l-1, 0), -1):
+        for i in xrange(r, max(l - 1, 0), -1):
             new[5 - r + i] = self[i]
         return new
 
@@ -48,7 +54,7 @@ class Word:
         word = Word(value)
         if l == 0:
             self[0] = word[0]
-        for i in xrange(r, max(l-1, 0), -1):
+        for i in xrange(r, max(l - 1, 0), -1):
             self[i] = word[5 - r + i]
 
     def is_zero(self):
@@ -60,12 +66,16 @@ class Word:
         return 0 if all(self[i] == cmp_word[i] for i in xrange(0, 6)) else 1
 
     def __str__(self):
-        return reduce(lambda x, y: "%s %02i" % (x, y), self.word_list[1:6], "+" if self[0] == 1 else "-")
+        return reduce(lambda x, y: "%s %02i" % (x, y),
+                      self.word_list[1:6], "+" if self[0] == 1 else "-")
 
     def addr_str(self):
-        return "%s %04i %02i %02i %02i" % tuple(["+" if self[0] == 1 else "-", self[1]*MAX_BYTE + self[2]] + self.word_list[3:])
+        return "%s %04i %02i %02i %02i" \
+            % tuple(["+" if self[0] == 1 else "-",
+                     self[1] * MAX_BYTE + self[2]] \
+                        + self.word_list[3:])
 
-    def __init__(self, obj = None):
+    def __init__(self, obj=None):
         if obj is None:
             self.word_list = [+1, 0, 0, 0, 0, 0]
         elif isinstance(obj, list) or isinstance(obj, tuple):

@@ -1,27 +1,23 @@
-
 from vm_errors import *
-
 import exec_all
-
-import sys, os
+import sys
+import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 from disasm import Disasm
+
 
 def execute(vmachine):
     # some common stuff
     if not vmachine.is_readable(vmachine.cur_addr):
-        raise MemReadLockedError( (vmachine.cur_addr, vmachine.cur_addr) )
-
+        raise MemReadLockedError((vmachine.cur_addr, vmachine.cur_addr))
     proc_name = Disasm.disasm(vmachine.get_cur_word())[0]
     if proc_name == "in":
-        proc_name = "in_" # it's done, because can't define function with name "in"
-
+        # it's done, because can't define function with name "in"
+        proc_name = "in_"
     if proc_name is not None:
         vmachine.jump_to = None
         before_cycles = vmachine["cycles"]
-
         exec_all.__dict__[proc_name](vmachine)
-
         if vmachine.jump_to is None:
             vmachine["cur_addr"] += 1
         else:

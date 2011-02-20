@@ -3,36 +3,40 @@ from execution import *
 from word_parser import *
 from word import *
 
+
 TRIGGERS = "cf of cur_addr halted cycles".split()
+
 
 class VMachine:
     MEMORY_SIZE = 4000
-
     # constants for locking
-    W_LOCKED = 0 # this cells are locked for write but you can read them
-    RW_LOCKED = 1 # this cells are locked for read and write
+    # this cells are locked for write but you can read them
+    W_LOCKED = 0
+    # this cells are locked for read and write
+    RW_LOCKED = 1
 
     def __getitem__(self, x):
         """Can raise exception"""
         if x in TRIGGERS:
             return self.__dict__[x]
-        if isinstance(x, slice): # slice, vm[2000:2:4] = ...
+        if isinstance(x, slice):  # slice, vm[2000:2:4] = ...
             item = x.start
             left = x.stop if x.stop is not None else 0
             right = x.step if x.step is not None else 5
-        else: # vm[2000] = ...
+        else:  # vm[2000] = ...
             item = x
             left = 0
             right = 5
-        return (self.memory[item] if isinstance(item, int) else self.reg(item))[left:right]
+        return (self.memory[item] if isinstance(item, int)
+                else self.reg(item))[left:right]
 
     def __setitem__(self, x, value):
         """Can raise exception"""
-        if isinstance(x, slice): # slice, vm[2000:2:4] = ...
+        if isinstance(x, slice):  # slice, vm[2000:2:4] = ...
             item = x.start
             left = x.stop if x.stop is not None else 0
             right = x.step if x.step is not None else 5
-        else: # vm[2000] = ...
+        else:  # vm[2000] = ...
             item = x
             left = 0
             right = 5
@@ -40,14 +44,15 @@ class VMachine:
         if isinstance(item, int):
             # we are working with memory
             self.memory[item][left:right] = value
-            if self.mem_hook is not None and old_value.word_list != self.memory[item].word_list:
+            if self.mem_hook is not None \
+                    and old_value.word_list != self.memory[item].word_list:
                 self.mem_hook(item, old_value, self.memory[item])
         else:
             # we are working with registers or triggers
             if item in TRIGGERS:
                 self.__dict__[item] = value
                 changed = old_value != self[item]
-            else: # register
+            else:  # register
                 self.reg(item)[left:right] = value
                 changed = old_value.word_list != self[item].word_list
             if self.cpu_hook is not None and changed:
@@ -55,9 +60,9 @@ class VMachine:
 
     def reg(self, r):
         return self.__dict__["r" + r]
+
     def set_reg(self, r, w):
         self.__dict__["r" + r] = Word(w)
-
 
     @staticmethod
     def check_mem_addr(addr):
@@ -67,10 +72,12 @@ class VMachine:
         """Need for testing"""
         positive_zero = [+1, 0, 0, 0, 0, 0]
         if not isinstance(memory_dict, dict) or \
-              any( (i     in memory_dict and self[i].word_list != memory_dict[i].word_list) or
-                        (i not in memory_dict and self[i].word_list != positive_zero)
-                        for i in xrange(VMachine.MEMORY_SIZE)):
-            return False
+                any((i in memory_dict \
+                         and self[i].word_list != memory_dict[i].word_list) \
+                        or (i not in memory_dict \
+                                and self[i].word_list != positive_zero)
+                    for i in xrange(VMachine.MEMORY_SIZE)):
+                return False
         else:
             return True
 
@@ -87,17 +94,17 @@ class VMachine:
 
     def set_memory(self, memory, reset):
         if isinstance(memory, list):
-            self.memory = [ Word(x) for x in memory]
+            self.memory = [Word(x) for x in memory]
             return
         if reset:
-            self.memory = [ Word() for _ in xrange(self.MEMORY_SIZE)]
+            self.memory = [Word() for _ in xrange(self.MEMORY_SIZE)]
         for addr, word in memory.items():
             # checking for correct input done in read_memory
             self[addr] = word
 
     def init_stuff(self, start_address):
-        self.rA, self.rX, self.r0, self.r1, self.r2, self.r3, self.r4, self.r5, self.r6, self.rJ =\
-                [Word(0) for _ in xrange(10)]
+        self.rA, self.rX, self.r0, self.r1, self.r2, self.r3, self.r4, \
+            self.r5, self.r6, self.rJ = [Word(0) for _ in xrange(10)]
         self.cf = 0
         self.of = False
         self.cur_addr = start_address
@@ -112,15 +119,20 @@ class VMachine:
 
     def is_readable(self, addr):
         return addr not in self.locked_cells[self.RW_LOCKED]
+
     def is_writeable(self, addr):
-        return addr not in ( self.locked_cells[self.W_LOCKED] | self.locked_cells[self.RW_LOCKED] )
+        return addr not in (self.locked_cells[self.W_LOCKED] \
+                                | self.locked_cells[self.RW_LOCKED])
+
     def is_readable_set(self, _set):
         return len(_set & self.locked_cells[self.RW_LOCKED]) == 0
-    def is_writeable_set(self, _set):
-        return len(_set & ( self.locked_cells[self.W_LOCKED] | self.locked_cells[self.RW_LOCKED] )) == 0
 
-    def lock_cells(self, mode, add = None, sub = None):
-        assert( (add is not None) ^ (sub is not None) )
+    def is_writeable_set(self, _set):
+        return len(_set & (self.locked_cells[self.W_LOCKED] \
+                                | self.locked_cells[self.RW_LOCKED])) == 0
+
+    def lock_cells(self, mode, add=None, sub=None):
+        assert((add is not None) ^ (sub is not None))
         if self.lock_hook is not None:
             old = set(self.locked_cells[mode])
         if add is not None:
@@ -130,14 +142,15 @@ class VMachine:
             # subtract set from self.locked_cells[mode]
             self.locked_cells[mode] -= sub
         if self.lock_hook is not None and self.locked_cells[mode] != old:
-            self.lock_hook("rw" if mode ==self.RW_LOCKED else "w", old, self.locked_cells[mode])
+            self.lock_hook("rw" if mode == self.RW_LOCKED \
+                               else "w", old, self.locked_cells[mode])
 
     def __init__(self, memory, start_address):
         self.errors = []
         self.set_cpu_hook(None)
         self.set_mem_hook(None)
         self.set_lock_hook(None)
-        self.set_memory(memory, reset = True)
+        self.set_memory(memory, reset=True)
         self.init_stuff(start_address)
         self.devices = {}
         self.locked_cells = [set(), set()]
@@ -153,15 +166,17 @@ class VMachine:
             # if device isn't busy returns None
             unlock = dev.refresh(cycles)
             if unlock is not None:
-                # else returned (mode, limits) - mode in 'rw', limits = (left, right) - properies of unlocked memory part
+                # else returned (mode, limits) - mode in 'rw', \
+                # limits = (left, right) - properies of unlocked memory part
                 if unlock[0] == 'w':
                     mode = self.W_LOCKED
                 elif unlock[0] == 'rw':
                     mode = self.RW_LOCKED
                 else:
-                    return # ioc busy
+                    return  # ioc busy
                 # unlock memory
-                self.lock_cells(mode, sub = set(range(unlock[1][0], unlock[1][1] + 1)))
+                self.lock_cells(mode, sub=set(range(unlock[1][0], \
+                                                        unlock[1][1] + 1)))
 
     def set_cpu_hook(self, hook):
         self.cpu_hook = hook

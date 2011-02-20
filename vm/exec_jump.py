@@ -1,31 +1,31 @@
 # j* (c_code = 34, 38..47)
-
 # done all but JBUS and JRED
 
 from exec_io import _get_device
 from word_parser import *
 
-def _j(vmachine, condition, save_j = True, reset_of = False):
-    vmachine["cycles"] += 1
 
+def _j(vmachine, condition, save_j=True, reset_of=False):
+    vmachine["cycles"] += 1
     if not condition(vmachine):
         return
-
     if reset_of:
         vmachine["of"] = False
-
     if save_j:
         vmachine["J":4:5] = vmachine.cur_addr + 1
+    vmachine.jump_to = WordParser.get_full_addr(vmachine,
+                                                check_mix_addr=True)
 
-    vmachine.jump_to = WordParser.get_full_addr(vmachine, check_mix_addr = True)
 
+def jbus(vmachine):
+    _j(vmachine, lambda vm: _get_device(vmachine).busy == True)
 
-def jbus(vmachine): _j(vmachine, lambda vm: _get_device(vmachine).busy == True)
-def jred(vmachine): _j(vmachine, lambda vm: _get_device(vmachine).busy == False)
+def jred(vmachine):
+    _j(vmachine, lambda vm: _get_device(vmachine).busy == False)
 
 def jmp(vmachine):    _j(vmachine, lambda vm: True)
-def jsj(vmachine):    _j(vmachine, lambda vm: True, save_j = False)
-def jov(vmachine):    _j(vmachine, lambda vm: vm["of"] == True, reset_of = 1)
+def jsj(vmachine):    _j(vmachine, lambda vm: True, save_j=False)
+def jov(vmachine):    _j(vmachine, lambda vm: vm["of"] == True, reset_of=1)
 def jnov(vmachine):   _j(vmachine, lambda vm: vm["of"] == False)
 def jl(vmachine):     _j(vmachine, lambda vm: vm["cf"] < 0)
 def je(vmachine):     _j(vmachine, lambda vm: vm["cf"] == 0)
