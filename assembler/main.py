@@ -1,18 +1,18 @@
 # main.py
+"""
+Assembler - one of the parts of MixMachine, which assemles mix source code
+("*.mix") to Mix Assembled code ("*.ma")
 
-# Assembler - one of the parts of MixMachine,
-# which assemles mix source code ("*.mix") to
-# Mix Assembled code ("*.ma")
+Main module of assembler.
 
-# Main module of assembler.
-# Read two file names (gets by command line arguments):
-# 1) input file (required)
-# 2) output file (default "out.ma")
+Read two file names (gets by command line arguments):
+1) input file (required)
+2) output file (default "out.ma")
+"""
 
 import sys
-from errors import *
-from parse_line import *
-from assemble import *
+from parse_line import parse_lines
+from assemble import Assembler
 from memory import Memory
 from listing import *
 

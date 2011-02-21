@@ -3,7 +3,7 @@
 # assemble parsed lines to memory
 
 import operations
-from errors import *
+import errors
 from parse_argument import parse_argument
 from memory import Memory
 from symbol_table import SymbolTable
@@ -43,7 +43,7 @@ class Assembler:
                     Assembler.__dict__["_do_" +
                                        line.operation.lower()](self, line)
 
-            except AssemblyError, err:
+            except errors.AssemblyError, err:
                 self._add_error(line, err)
 
     def _do_instruction(self, line):
@@ -52,7 +52,7 @@ class Assembler:
             # first pass
             try:
                 self._parse_arg(line)
-            except AssemblyError:
+            except errors.AssemblyError:
                 # errors in parsing argument are checked on the 2nd pass
                 pass
             self.ca += 1
@@ -90,7 +90,7 @@ class Assembler:
             self.start_address = self._parse_arg(line)[0]
             for value, sign in self.symtable.literals:
                 if not self.memory.is_valid_address(self.ca):
-                    raise NoFreeSpaceForLiteralsError
+                    raise errors.NoFreeSpaceForLiteralsError
                 #raise "TODO"
                 #line.asm_address = self.ca
                 self._write_word(value, sign)
@@ -104,7 +104,7 @@ class Assembler:
         else:
             real_sign = +1 if value >= 0 else -1
         if self.ca in self.occupied_cells:
-            raise RepeatedCellError(self.ca)
+            raise errors.RepeatedCellError(self.ca)
         else:
             self.occupied_cells.append(self.ca)
             self.memory[self.ca] = value
@@ -123,9 +123,9 @@ class Assembler:
         if line.label is not None:
             try:
                 self.symtable.set_label(line.label, self.ca, line.line_number)
-            except AssemblyError, err:
+            except errors.AssemblyError, err:
                 self._add_error(line, err)
 
     def _check_address(self, line):
         if self.npass == 1 and not self.memory.is_valid_address(self.ca):
-            self._add_error(line, LineNumberError(self.ca))
+            self._add_error(line, errors.LineNumberError(self.ca))
