@@ -2,6 +2,7 @@ from vm_errors import *
 from execution import *
 from word_parser import *
 from word import *
+from opcodes import opcodes
 
 
 TRIGGERS = "cf of cur_addr halted cycles".split()
@@ -155,6 +156,24 @@ class VMachine:
         self.devices = {}
         self.locked_cells = [set(), set()]
         self.cycles = 0
+
+    def execute(self):
+        # some common stuff
+        if not self.is_readable(self.cur_addr):
+            raise MemReadLockedError((self.cur_addr, self.cur_addr))
+        current_word = self.get_cur_word()
+        c = current_word[5]
+        f = current_word[4]
+        op = opcodes.get(c, opcodes.get((c,f), None))
+        self.jump_to = None
+        before_cycles = self["cycles"]
+        op(self)
+        if self.jump_to is None:
+            self["cur_addr"] += 1
+        else:
+            self["cur_addr"] = self.jump_to
+        
+        return self["cycles"] - before_cycles
 
     def step(self):
         if not self.check_mem_addr(self.cur_addr):

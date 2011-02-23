@@ -52,6 +52,5 @@ def main():
     in_file.close()
 
 
-# if we executing module
 if __name__ == '__main__':
     main()
