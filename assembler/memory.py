@@ -6,31 +6,35 @@ MEMORY_SIZE = 4000
 class Memory:
     @staticmethod
     def positive_zero():
+        """
+        Return a mix word representing a positive zero
+        """
         return [1, 0, 0, 0, 0, 0]
 
     def __init__(self):
-        self.memory = [self.positive_zero()[:] for _ in xrange(MEMORY_SIZE)]
+        self.memory = [self.positive_zero() for _ in xrange(MEMORY_SIZE)]
 
     def __getitem__(self, index):
         return self.memory[index]
 
     def __setitem__(self, index, value):
-        word = self.dec2mix(value)
-
         if self.is_valid_address(index):
-            self.memory[index][:] = word[:]
+            self.memory[index] = self.dec2mix(value)
 
     def set_sign(self, index, sign):
         if self.is_valid_address(index):
             self.memory[index][0] = sign
 
     def __cmp__(self, memory_dict):
-        """Need for testing"""
+        """
+        Needed for testing
+        """
         positive_zero = self.positive_zero()
-        if not isinstance(memory_dict, dict) or \
-              any((i in memory_dict and self[i] != memory_dict[i]) or
-                  (i not in memory_dict and self[i] != positive_zero)
-                  for i in xrange(MEMORY_SIZE)):
+        if not isinstance(memory_dict, dict):
+            return 1
+        if any((i in memory_dict and self[i] != memory_dict[i])
+               or (i not in memory_dict and self[i] != positive_zero)
+               for i in xrange(MEMORY_SIZE)):
             return 1
         else:
             return 0
@@ -51,10 +55,7 @@ class Memory:
 
     @staticmethod
     def sign(x):
-        if x >= 0:
-            return +1
-        else:
-            return -1
+        return +1 if x >= 0 else -1
 
     @staticmethod
     def apply_to_word(value, word, field):

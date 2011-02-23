@@ -1,6 +1,6 @@
-# assemble.py
-
-# assemble parsed lines to memory
+"""
+assemble parsed lines to memory
+"""
 
 import operations
 import errors

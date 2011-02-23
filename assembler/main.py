@@ -14,7 +14,7 @@ import sys
 from parse_line import parse_lines
 from assemble import Assembler
 from memory import Memory
-from listing import *
+#from listing import *
 
 
 DEFAULT_OUT_NAME = "out.ma"
@@ -37,17 +37,17 @@ def write_asm_file(file, start_address, memory):
     write_memory(file, memory)
 
 
-def main():
+def parse_args():
     arg_number = len(sys.argv) - 1
     if arg_number < 1 or arg_number > 2:
-        print ERR_INVALID_ARGS[1]
-        return ERR_INVALID_ARGS[0]
+        print errors.ERR_INVALID_ARGS[1]
+        sys.exit(errors.ERR_INVALID_ARGS[0])
     try:
         file_in = open(sys.argv[1], "r")
     except IOError, (errno, strerror):
         print "%s (%s): %s" % (ERR_INVALID_INPUT_FILE[1],
                                sys.argv[1], strerror)
-        return ERR_INVALID_INPUT_FILE[0]
+        sys.exit(ERR_INVALID_INPUT_FILE[0])
     try:
         file_out = open(sys.argv[2] if arg_number == 2
                                     else DEFAULT_OUT_NAME, 'w')
@@ -57,7 +57,11 @@ def main():
                                sys.argv[2] if arg_number == 2
                                            else DEFAULT_OUT_NAME,
                                strerror)
-        return ERR_INVALID_OUTPUT_FILE[0]
+        sys.exit(ERR_INVALID_OUTPUT_FILE[0])
+    return file_in, file_out
+
+def main():
+    file_in, file_out = parse_args()
     src_lines = file_in.readlines()
     lines, errors = parse_lines(src_lines)
     file_in.close()
@@ -84,11 +88,5 @@ def main():
     write_asm_file(file_out, start_address, memory_table.memory)
     file_out.close()
 
-    # create listing
-    #listing = Listing(src_lines, lines, memory_table.memory,
-    #                  asm.symtable.literals, asm.end_address)
-    #print listing
-
-# if we executing module
 if __name__ == '__main__':
     main()
