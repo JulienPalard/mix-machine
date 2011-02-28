@@ -5,8 +5,17 @@ from word import *
 from opcodes import opcodes
 
 
-TRIGGERS = "cf of cur_addr halted cycles".split()
-
+TRIGGERS = ['cf', 'of', 'cur_addr', 'halted', 'cycles']
+"""
+Trying to document (reverse engenieer) those fields :
+cf: Seems to be the 'Comparison Field' named 'Comparison Indicator' by Knuth
+of: Seems to be the 'Overflow Field' named 'Overflow Toggle' by Knuth
+cur_addr: Initialised to start address, it's a pointer to the word currently
+          pointed by the machine.
+halted: As its name is verbose, a boolean storing the state of the machine, set
+        to True only by hlt
+cycles: A counter to store the number of units of time consumed
+"""
 
 class VMachine:
     MEMORY_SIZE = 4000
@@ -172,7 +181,7 @@ class VMachine:
             self["cur_addr"] += 1
         else:
             self["cur_addr"] = self.jump_to
-        
+
         return self["cycles"] - before_cycles
 
     def step(self):
