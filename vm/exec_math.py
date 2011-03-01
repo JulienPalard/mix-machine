@@ -9,14 +9,14 @@ def _add(vmachine, sign=1):
     vmachine["cycles"] += 2
     addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
     left, right = WordParser.get_field_spec(vmachine)
-    result = int(vmachine["A"]) + sign * int(vmachine[addr:left:right])
+    result = int(vmachine.registers.rA) + sign * int(vmachine[addr:left:right])
     if abs(result) >= MAX_BYTE ** 5:
         vmachine["of"] = True
     # "if result == 0 than we should save previous sign" - Knuth
-    sign_word = vmachine["A":0:0]
-    vmachine["A"] = result
+    sign_word = vmachine.registers.rA[0:0]
+    vmachine.registers.rA = result
     if result == 0:
-        vmachine["A":0:0] = sign_word
+        vmachine.registers.rA[0:0] = sign_word
 
 
 def add(vmachine):
@@ -32,13 +32,12 @@ def mul(vmachine):
     addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
     left, right = WordParser.get_field_spec(vmachine)
     # multiply unsigned words
-    result = int(vmachine["A":1:5]) * int(vmachine[addr:max(1, left):right])
+    result = int(vmachine.registers.rA[1:5]) * int(vmachine[addr:max(1, left):right])
     # signs of rA and rX from Knuth
-    vmachine["A":0:0] = vmachine["X":0:0] = vmachine["A"][0] \
-                                            * vmachine[addr][0]
-
-    vmachine["A":1:5] = result / MAX_BYTE ** 5
-    vmachine["X":1:5] = result % MAX_BYTE ** 5
+    vmachine.registers.rA[0:0] = vmachine.registers.rX[0:0] \
+        = vmachine.registers.rA[0] * vmachine[addr][0]
+    vmachine.registers.rA[1:5] = result / MAX_BYTE ** 5
+    vmachine.registers.rX[1:5] = result % MAX_BYTE ** 5
 
 
 def div(vmachine):
@@ -48,15 +47,15 @@ def div(vmachine):
     u_divisor = int(vmachine[addr:max(1, left):right])
     divisor_sign = vmachine[addr][0] if left == 0 else 1
     # from Knuth book
-    if u_divisor == 0 or int(vmachine["A":1:5]) >= u_divisor:
+    if u_divisor == 0 or int(vmachine.registers.rA[1:5]) >= u_divisor:
         vmachine["of"] = True
         return
-    u_dividend = int(vmachine["A":1:5]) * MAX_BYTE ** 5 \
-                 + int(vmachine["X":1:5])
+    u_dividend = int(vmachine.registers.rA[1:5]) * MAX_BYTE ** 5 \
+                 + int(vmachine.registers.rX[1:5])
 
     # sign of rX is previous sign of rA
-    vmachine["X":0:0] = vmachine["A":0:0]
+    vmachine.registers.rX[0:0] = vmachine.registers.rA[0:0]
     # sign of rA - division sign
-    vmachine["A":0:0] = vmachine["A"][0] * divisor_sign
-    vmachine["X":1:5] = u_dividend % u_divisor
-    vmachine["A":1:5] = u_dividend / u_divisor
+    vmachine.registers.rA[0:0] = vmachine.registers.rA[0] * divisor_sign
+    vmachine.registers.rX[1:5] = u_dividend % u_divisor
+    vmachine.registers.rA[1:5] = u_dividend / u_divisor

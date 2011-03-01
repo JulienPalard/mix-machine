@@ -3,6 +3,7 @@ from execution import *
 from word_parser import *
 from word import *
 from opcodes import opcodes
+from registers import Registers
 
 
 TRIGGERS = ['cf', 'of', 'cur_addr', 'halted', 'cycles']
@@ -37,8 +38,11 @@ class VMachine:
             item = x
             left = 0
             right = 5
-        return (self.memory[item] if isinstance(item, int)
-                else self.reg(item))[left:right]
+        if not isinstance(item, int):
+            raise Exception("Temporary exception for debug... you sould not \
+pass a non int here, please use \
+virt_machine.registers")
+        return self.memory[item][left:right]
 
     def __setitem__(self, x, value):
         """Can raise exception"""
@@ -63,16 +67,9 @@ class VMachine:
                 self.__dict__[item] = value
                 changed = old_value != self[item]
             else:  # register
-                self.reg(item)[left:right] = value
-                changed = old_value.word_list != self[item].word_list
-            if self.cpu_hook is not None and changed:
-                self.cpu_hook(item, old_value, self[item])
-
-    def reg(self, r):
-        return self.__dict__["r" + r]
-
-    def set_reg(self, r, w):
-        self.__dict__["r" + r] = Word(w)
+                raise Exception("Temporary exception for debug... you sould not \
+pass a non int here, please use \
+virt_machine.registers")
 
     @staticmethod
     def check_mem_addr(addr):
@@ -95,9 +92,12 @@ class VMachine:
         return self[self.cur_addr]
 
     def clear_rI(self, reg):
-        """Return True if overflowed"""
-        if reg in "123456" and self[reg:1:3] != Word():
-            self[reg:1:3] = 0
+        """
+        Return True if overflowed
+        Julien: Just become useless if called with 1/2/3/4/5/6
+        """
+        if isinstance(reg, int) and self.registers[reg][1:3] != Word():
+            self.registers[reg:1:3] = 0
             return True
         else:
             return False
@@ -113,8 +113,8 @@ class VMachine:
             self[addr] = word
 
     def init_stuff(self, start_address):
-        self.rA, self.rX, self.r0, self.r1, self.r2, self.r3, self.r4, \
-            self.r5, self.r6, self.rJ = [Word(0) for _ in xrange(10)]
+        self.rA, self.rX, self.rJ = [Word(0) for _ in xrange(3)]
+        self.r = [Word(0) for _ in xrange(7)]
         self.cf = 0
         self.of = False
         self.cur_addr = start_address
@@ -157,6 +157,7 @@ class VMachine:
 
     def __init__(self, memory, start_address):
         self.errors = []
+        self.registers = Registers()
         self.set_cpu_hook(None)
         self.set_mem_hook(None)
         self.set_lock_hook(None)

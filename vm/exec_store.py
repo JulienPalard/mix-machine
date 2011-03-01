@@ -6,7 +6,7 @@ from word_parser import *
 
 def _st(vmachine, reg):
     vmachine["cycles"] += 2
-    src = Word() if reg == "Z" else vmachine[reg]
+    src = Word() if reg == "Z" else vmachine.registers[reg]
     # dst - vmachine[addr]
     addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
     if not vmachine.is_writeable(addr):
@@ -22,27 +22,26 @@ def sta(vmachine):
 
 
 def st1(vmachine):
-    _st(vmachine, "1")
-
+    _st(vmachine, 1)
 
 def st2(vmachine):
-    _st(vmachine, "2")
+    _st(vmachine, 2)
 
 
 def st3(vmachine):
-    _st(vmachine, "3")
+    _st(vmachine, 3)
 
 
 def st4(vmachine):
-    _st(vmachine, "4")
+    _st(vmachine, 4)
 
 
 def st5(vmachine):
-    _st(vmachine, "5")
+    _st(vmachine, 5)
 
 
 def st6(vmachine):
-    _st(vmachine, "6")
+    _st(vmachine, 6)
 
 
 def stx(vmachine):

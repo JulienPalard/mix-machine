@@ -23,10 +23,10 @@ def num(vmachine):
     # reduce - create string of all digits
     # int - convert it to int
     # % MB**10 - to avoid overflow
-    vmachine["A":1:5] = int(reduce(lambda x, y: x + str(y % 10),
-                                   vmachine["A"].word_list[1:6]
-                                   + vmachine["X"].word_list[1:6], "")) \
-                                   % MAX_BYTE ** 10
+    vmachine.registers.rA[1:5] = int(reduce(lambda x, y: x + str(y % 10),
+                               vmachine.registers.rA.word_list[1:6]
+                               + vmachine.registers.rA.word_list[1:6], "")) \
+                               % MAX_BYTE ** 10
 
 
 def char(vmachine):
@@ -35,10 +35,12 @@ def char(vmachine):
     # vmachine.rA[1:5] - num for convert
     # str(num) - convert to string
     # map(lambda x : int(x) + 30, s) - get list of mix-chars
-    seq = map(lambda x: int(x) + 30, str(int(vmachine["A":1:5])))
+    seq = map(lambda x: int(x) + 30, str(int(vmachine.registers.rA[1:5])))
     seq = [30] * (10 - len(seq)) + seq
-    vmachine["A":1:5] = [1] + seq[0:5]  # +1 added like a sign to word
-    vmachine["X":1:5] = [1] + seq[5:10]  # +1 added like a sign to word
+    # +1 added like a sign to word
+    vmachine.registers.rA[1:5] = [1] + seq[0:5]
+    # +1 added like a sign to word
+    vmachine.registers.rX[1:5] = [1] + seq[5:10]
 
 
 def move(vmachine):
@@ -49,7 +51,7 @@ def move(vmachine):
     if num == 0:
         return
     src = WordParser.get_full_addr(vmachine, check_mix_addr=True)
-    dst = int(vmachine["1"])
+    dst = int(vmachine.registers[1])
     if not vmachine.is_readable_set(set(range(src, src + num))):
         raise MemReadLockedError((src, src + num - 1))
     if not vmachine.is_writeable_set(set(range(dst, dst + num))):
@@ -66,7 +68,7 @@ def move(vmachine):
             vmachine["cycles"] += 2
     except IndexError:
         # it's not written in Knuth book, but it's very logically,
-        vmachine["1"] = dst
-        raise InvalidMoveError((num, src, int(vmachine["1"])))
+        vmachine.registers[1] = dst
+        raise InvalidMoveError((num, src, int(vmachine.registers[1])))
     else:
-        vmachine["1"] = dst
+        vmachine.registers[1] = dst

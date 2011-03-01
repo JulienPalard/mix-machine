@@ -91,11 +91,11 @@ class VMTesting:
         for reg in "AXJ":
             rv = mega.get(reg)
             if rv is not None:
-                self.vm.set_reg(reg, Word(rv))
-        for reg in "123456":
-            rv = mega.get("I" + reg)
+                self.vm.registers[reg] = Word(rv)
+        for reg in xrange(1, 7):
+            rv = mega.get("I" + str(reg))
             if rv is not None:
-                self.vm.set_reg(reg, Word(mega["I" + reg]))
+                self.vm.registers[reg] = Word(mega["I" + str(reg)])
 
         if mega.get("CA") is not None:
             self.vm.cur_addr = mega["CA"]
@@ -132,9 +132,9 @@ class VMTesting:
                          xrange(self.vm.MEMORY_SIZE)])
 
         for reg in "AXJ":
-            mega[reg] = self.vm.reg(reg).word_list[:]
-        for reg in "123456":
-            mega["I" + reg] = self.vm.reg(reg).word_list[:]
+            mega[reg] = self.vm.registers[reg].word_list[:]
+        for reg in xrange(1, 7):
+            mega["I%d" % reg] = self.vm.registers[reg].word_list[:]
 
         mega["CA"] = self.vm.cur_addr
         mega["CF"] = self.vm.cf

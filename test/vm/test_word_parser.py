@@ -2,18 +2,20 @@ from helper import *
 from word_parser import *
 from word import *
 from virt_machine import *
+from registers import Registers
 
 class WordParserTestCase(unittest.TestCase):
   class MockVMachine:
     def __init__(self, word, r1 = None, r2 = None, r3 = None, r4 = None, r5 = None, r6 = None):
       self.word = Word(word)
-      self.r0 = Word()
-      self.r1 = Word(r1)
-      self.r2 = Word(r2)
-      self.r3 = Word(r3)
-      self.r4 = Word(r4)
-      self.r5 = Word(r5)
-      self.r6 = Word(r6)
+      self.registers = Registers()
+      self.registers.r[0] = Word()
+      self.registers.r[1] = Word(r1)
+      self.registers.r[2] = Word(r2)
+      self.registers.r[3] = Word(r3)
+      self.registers.r[4] = Word(r4)
+      self.registers.r[5] = Word(r5)
+      self.registers.r[6] = Word(r6)
       self.of = False
 
     def __getitem__(self, item):

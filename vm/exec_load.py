@@ -14,38 +14,37 @@ def _ld(vmachine, reg, sign=1):
     # result will be loaded to reg
     result = src[max(1, left):right]
     result[0] = sign * (src[0] if left == 0 else +1)
-    vmachine[reg] = result
+    vmachine.registers[reg] = result
     if vmachine.clear_rI(reg):
         # overflow, but nothing do (see Knuth)
         pass
-
 
 def lda(vmachine):
     _ld(vmachine, "A")
 
 
 def ld1(vmachine):
-    _ld(vmachine, "1")
+    _ld(vmachine, 1)
 
 
 def ld2(vmachine):
-    _ld(vmachine, "2")
+    _ld(vmachine, 2)
 
 
 def ld3(vmachine):
-    _ld(vmachine, "3")
+    _ld(vmachine, 3)
 
 
 def ld4(vmachine):
-    _ld(vmachine, "4")
+    _ld(vmachine, 4)
 
 
 def ld5(vmachine):
-    _ld(vmachine, "5")
+    _ld(vmachine, 5)
 
 
 def ld6(vmachine):
-    _ld(vmachine, "6")
+    _ld(vmachine, 6)
 
 
 def ldx(vmachine):
@@ -57,27 +56,27 @@ def ldan(vmachine):
 
 
 def ld1n(vmachine):
-    _ld(vmachine, "1", -1)
+    _ld(vmachine, 1, -1)
 
 
 def ld2n(vmachine):
-    _ld(vmachine, "2", -1)
+    _ld(vmachine, 2, -1)
 
 
 def ld3n(vmachine):
-    _ld(vmachine, "3", -1)
+    _ld(vmachine, 3, -1)
 
 
 def ld4n(vmachine):
-    _ld(vmachine, "4", -1)
+    _ld(vmachine, 4, -1)
 
 
 def ld5n(vmachine):
-    _ld(vmachine, "5", -1)
+    _ld(vmachine, 5, -1)
 
 
 def ld6n(vmachine):
-    _ld(vmachine, "6", -1)
+    _ld(vmachine, 6, -1)
 
 
 def ldxn(vmachine):

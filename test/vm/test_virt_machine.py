@@ -39,18 +39,18 @@ class VMachineTestCase(unittest.TestCase):
 
   def testReg(self):
     vm = VMachine({}, 0)
-    self.assertEqual(vm.reg("A"), Word())
-    self.assertEqual(vm.reg("X"), Word())
-    self.assertEqual(vm.reg("1"), Word())
-    self.assertEqual(vm.reg("6"), Word())
-  
+    self.assertEqual(vm.registers["A"], Word())
+    self.assertEqual(vm.registers["X"], Word())
+    self.assertEqual(vm.registers[1], Word())
+    self.assertEqual(vm.registers[6], Word())
+
   def testSetReg(self):
     vm = VMachine({}, 0)
-    vm.set_reg("A", Word(666))
-    self.assertEqual(vm.rA, Word(666))
-    vm.set_reg("X", Word(777))
-    self.assertEqual(vm.rA, Word(666))
-    self.assertEqual(vm.rX, Word(777))
+    vm.registers["A"] = Word(666)
+    self.assertEqual(vm.registers.rA, Word(666))
+    vm.registers["X"] = Word(777)
+    self.assertEqual(vm.registers.rA, Word(666))
+    self.assertEqual(vm.registers.rX, Word(777))
 
 suite = unittest.makeSuite(VMachineTestCase, 'test')
 

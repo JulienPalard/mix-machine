@@ -32,7 +32,7 @@ def _s(vmachine, src, dir, cycle=False):
 
 def _sa(vmachine, dir):
     # +1 added like a sign to word
-    vmachine["A":1:5] = [+1] + _s(vmachine, vmachine["A"].word_list[1:6], dir)
+    vmachine.registers.rA[1:5] = [+1] + _s(vmachine, vmachine.registers.rA.word_list[1:6], dir)
 
 
 def sla(vmachine):
@@ -44,10 +44,10 @@ def sra(vmachine):
 
 
 def _sax(vmachine, dir, cycle=False):
-    res = _s(vmachine, vmachine["A"].word_list[1:6] \
-                 + vmachine["X"].word_list[1:6], dir, cycle)
-    vmachine["A":1:5] = [+1] + res[0:5]  # +1 added like a sign to word
-    vmachine["X":1:5] = [+1] + res[5:10]  # +1 added like a sign to word
+    res = _s(vmachine, vmachine.registers.rA.word_list[1:6] \
+                 + vmachine.registers.rX.word_list[1:6], dir, cycle)
+    vmachine.registers.rA[1:5] = [+1] + res[0:5]  # +1 added like a sign to word
+    vmachine.registers.rX[1:5] = [+1] + res[5:10]  # +1 added like a sign to word
 
 
 def slax(vmachine):
