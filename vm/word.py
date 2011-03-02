@@ -14,7 +14,7 @@ class Word:
         mask = MAX_BYTE - 1  # 1<<6 - 1
         u_num = abs(num)
         # 24 = 6 * (5-1)
-        return [Word.sign(num)] + [int((u_num >> shift) & mask)
+        return [Word.sign(num)] + [(u_num >> shift) & mask
                                    for shift in xrange(24, -1, -6)]
 
     @staticmethod
@@ -75,7 +75,7 @@ class Word:
                      self[1] * MAX_BYTE + self[2]] \
                         + self.word_list[3:])
 
-    def __init__(self, obj=None):
+    def set(self, obj=None):
         if obj is None:
             self.word_list = [+1, 0, 0, 0, 0, 0]
         elif isinstance(obj, list) or isinstance(obj, tuple):
@@ -84,3 +84,6 @@ class Word:
             self.word_list = self.from_dec(obj)
         elif isinstance(obj, Word):
             self.word_list = obj.word_list[:]
+
+    def __init__(self, obj=None):
+        self.set(obj)

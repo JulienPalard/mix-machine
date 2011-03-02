@@ -31,3 +31,4 @@ class Registers:
         #changed = old_value.word_list != self[item].word_list
         #if self.cpu_hook is not None and changed:
         #    self.cpu_hook(item, old_value, self[item])
+

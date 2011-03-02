@@ -91,17 +91,6 @@ virt_machine.registers")
     def get_cur_word(self):
         return self[self.cur_addr]
 
-    def clear_rI(self, reg):
-        """
-        Return True if overflowed
-        Julien: Just become useless if called with 1/2/3/4/5/6
-        """
-        if isinstance(reg, int) and self.registers[reg][1:3] != Word():
-            self.registers[reg][1:3] = 0
-            return True
-        else:
-            return False
-
     def set_memory(self, memory, reset):
         if isinstance(memory, list):
             self.memory = [Word(x) for x in memory]

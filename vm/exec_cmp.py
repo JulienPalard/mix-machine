@@ -3,20 +3,22 @@
 # ALL DONE
 from word_parser import *
 
-def _cmp(vmachine, reg):
-    vmachine["cycles"] += 2
-    addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
-    if not vmachine.is_readable(addr):
-        raise MemReadLockedError((addr, addr))
-    left, right = WordParser.get_field_spec(vmachine)
-    vmachine["cf"] = cmp(int(vmachine.registers[reg][left:right]),
-                         int(vmachine[addr:left:right]))
+def _cmp(reg):
+    def __cmp(vmachine):
+       vmachine["cycles"] += 2
+       addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
+       if not vmachine.is_readable(addr):
+           raise MemReadLockedError((addr, addr))
+       left, right = WordParser.get_field_spec(vmachine)
+       vmachine["cf"] = cmp(int(vmachine.registers[reg][left:right]),
+                            int(vmachine[addr:left:right]))
+    return __cmp
 
-def cmpa(vmachine):  _cmp(vmachine, "A")
-def cmp1(vmachine):  _cmp(vmachine, 1)
-def cmp2(vmachine):  _cmp(vmachine, 2)
-def cmp3(vmachine):  _cmp(vmachine, 3)
-def cmp4(vmachine):  _cmp(vmachine, 4)
-def cmp5(vmachine):  _cmp(vmachine, 5)
-def cmp6(vmachine):  _cmp(vmachine, 6)
-def cmpx(vmachine):  _cmp(vmachine, "X")
+cmpa = _cmp("A")
+cmp1 = _cmp(1)
+cmp2 = _cmp(2)
+cmp3 = _cmp(3)
+cmp4 = _cmp(4)
+cmp5 = _cmp(5)
+cmp6 = _cmp(6)
+cmpx = _cmp("X")
