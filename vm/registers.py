@@ -9,25 +9,27 @@ class Registers:
 
     def __getitem__(self, x):
         if isinstance(x, slice):
-            item = x.start
             left = x.stop if x.stop is not None else 0
             right = x.step if x.step is not None else 5
+            return self.reg(x.start)[left:right]
         else:
-            item = x
-            left = 0
-            right = 5
-        return self.reg(item)[left:right]
+            return self.reg(x)
 
     def __setitem__(self, x, value):
         if isinstance(x, slice):
             item = x.start
             left = x.stop if x.stop is not None else 0
             right = x.step if x.step is not None else 5
+            self.reg(item)[left:right] = value
         else:
-            item = x
-            left = 0
-            right = 5
-        self.reg(item)[left:right] = value
+            if x == 'A':
+                self.rA = Word(value)
+            elif x == 'X':
+                self.rX = Word(value)
+            elif x == 'J':
+                self.rJ = Word(value)
+            else:
+                self.r[x] = Word(value)
         #TODO: Hum, I broke this hook splitting this code in registers.py
         #old_value = self[item]
         #changed = old_value.word_list != self[item].word_list
@@ -35,26 +37,12 @@ class Registers:
         #    self.cpu_hook(item, old_value, self[item])
 
     def reg(self, r):
-        if isinstance(r, int):
+        if r == 'A':
+            return self.rA
+        elif r == 'X':
+            return self.rX
+        elif r == 'J':
+            return self.rJ
+        else:
             return self.r[r]
-        else:
-            if r == 'A':
-                return self.rA
-            elif r == 'X':
-                return self.rX
-            elif r == 'J':
-                return self.rJ
-        raise Exception("Unexisting register %s" % r)
-
-    def set_reg(self, r, w):
-        if isinstance(r, int):
-            self.r[r] = Word(w)
-        else:
-            if r == 'A':
-                self.rA = Word(w)
-            elif r == 'X':
-                self.rX = Word(w)
-            elif r == 'J':
-                self.rJ = Word(w)
-        raise Exception("Unexisting register %s" % r)
 
