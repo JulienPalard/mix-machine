@@ -97,7 +97,7 @@ virt_machine.registers")
         Julien: Just become useless if called with 1/2/3/4/5/6
         """
         if isinstance(reg, int) and self.registers[reg][1:3] != Word():
-            self.registers[reg:1:3] = 0
+            self.registers[reg][1:3] = 0
             return True
         else:
             return False

@@ -13,7 +13,7 @@ def _linear_manipulation(vmachine, reg, sign, inc_action):
     if result == 0:
         if inc_action:
             # if inc/dec sign is from previous register (line in ADD)
-            w_result = Word([vmachine.registers[reg:0:0][0], 0, 0, 0, 0, 0])
+            w_result = Word([vmachine.registers[reg][0:0][0], 0, 0, 0, 0, 0])
         else:
             # if ent/enn sign is from M (line in LD*)
             w_result = Word([sign * WordParser.get_sign(vmachine),
