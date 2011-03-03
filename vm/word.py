@@ -51,8 +51,9 @@ class Word:
         word = Word(value)
         if l == 0:
             self[0] = word[0]
-        for i in xrange(r, max(l - 1, 0), -1):
-            self[i] = word[5 - r + i]
+        start = max(l - 1, 0) + 1
+        end = r + 1
+        self.word_list[start:end] = word.word_list[5 - r + start: 5 - r + end]
 
     def is_zero(self):
         return self.word_list[1:] == ([0] * 5)
