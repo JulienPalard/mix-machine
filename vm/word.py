@@ -39,18 +39,15 @@ class Word:
         self.word_list[x] = value
 
     def __getslice__(self, l, r):
-        l = max(l, 0)
-        r = min(r, 5)
         new = Word()
         if l == 0:
             new[0] = self[0]
-        for i in xrange(r, max(l - 1, 0), -1):
-            new[5 - r + i] = self[i]
+        start = max(l - 1, 0) + 1
+        end = r + 1
+        new.word_list[5 - r + start: 5 - r + end] = self.word_list[start:end]
         return new
 
     def __setslice__(self, l, r, value):
-        l = max(l, 0)
-        r = min(r, 5)
         word = Word(value)
         if l == 0:
             self[0] = word[0]
