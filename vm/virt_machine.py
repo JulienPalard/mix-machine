@@ -30,34 +30,14 @@ class VMachine:
         """Can raise exception"""
         if x in TRIGGERS:
             return self.__dict__[x]
-        if isinstance(x, slice):  # slice, vm[2000:2:4] = ...
-            item = x.start
-            left = x.stop if x.stop is not None else 0
-            right = x.step if x.step is not None else 5
-        else:  # vm[2000] = ...
-            item = x
-            left = 0
-            right = 5
-        if not isinstance(item, int):
-            raise Exception("Temporary exception for debug... you sould not \
-pass a non int here, please use \
-virt_machine.registers")
-        return self.memory[item][left:right]
+        return self.memory[x]
 
-    def __setitem__(self, x, value):
+    def __setitem__(self, item, value):
         """Can raise exception"""
-        if isinstance(x, slice):  # slice, vm[2000:2:4] = ...
-            item = x.start
-            left = x.stop if x.stop is not None else 0
-            right = x.step if x.step is not None else 5
-        else:  # vm[2000] = ...
-            item = x
-            left = 0
-            right = 5
         old_value = self[item]
         if isinstance(item, int):
             # we are working with memory
-            self.memory[item][left:right] = value
+            self.memory[item] = value
             if self.mem_hook is not None \
                     and old_value.word_list != self.memory[item].word_list:
                 self.mem_hook(item, old_value, self.memory[item])
@@ -171,7 +151,6 @@ virt_machine.registers")
             self["cur_addr"] += 1
         else:
             self["cur_addr"] = self.jump_to
-
         return self["cycles"] - before_cycles
 
     def step(self):
