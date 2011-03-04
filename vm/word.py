@@ -41,7 +41,7 @@ class Word:
     def __getslice__(self, l, r):
         new = Word()
         if l == 0:
-            new[0] = self[0]
+            new.word_list[0] = self.word_list[0]
         start = max(l - 1, 0) + 1
         end = r + 1
         new.word_list[5 - r + start: 5 - r + end] = self.word_list[start:end]
@@ -50,7 +50,7 @@ class Word:
     def __setslice__(self, l, r, value):
         word = Word(value)
         if l == 0:
-            self[0] = word[0]
+            self.word_list[0] = word.word_list[0]
         start = max(l - 1, 0) + 1
         end = r + 1
         self.word_list[start:end] = word.word_list[5 - r + start: 5 - r + end]
