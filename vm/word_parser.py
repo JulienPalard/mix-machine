@@ -14,7 +14,7 @@ class WordParser:
         if abs(addr) >= MAX_BYTE ** 2:
             addr = Word.norm_2bytes(addr)
             if check_overflow:
-                vmachine["of"] = True
+                vmachine.of = True
         if check_mix_addr and not vmachine.check_mem_addr(addr):
             raise InvalidMemAddrError(addr)
         return addr

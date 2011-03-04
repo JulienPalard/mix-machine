@@ -5,7 +5,7 @@ from word_parser import *
 
 
 def _st(vmachine, reg):
-    vmachine["cycles"] += 2
+    vmachine.cycles += 2
     src = Word() if reg == "Z" else vmachine.registers[reg]
     # dst - vmachine[addr]
     addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)

@@ -7,7 +7,7 @@ from word_parser import *
 
 def _ld(reg, sign=1):
     def __ld(vmachine):
-        vmachine["cycles"] += 2
+        vmachine.cycles += 2
         # src - can be cell with address [-1, 0, 0] =(2dec)= 0
         src = vmachine[WordParser.get_full_addr(vmachine, check_mix_addr=True)]
         # dst - rREG

@@ -11,7 +11,7 @@ RIGHT = 1
 
 
 def _s(vmachine, src, dir, cycle=False):
-    vmachine["cycles"] += 2
+    vmachine.cycles += 2
     assert(dir in (LEFT, RIGHT))
     length = len(src)
     shift = WordParser.get_full_addr(vmachine)

@@ -5,12 +5,12 @@ from word_parser import *
 
 def _cmp(reg):
     def __cmp(vmachine):
-       vmachine["cycles"] += 2
+       vmachine.cycles += 2
        addr = WordParser.get_full_addr(vmachine, check_mix_addr=True)
        if not vmachine.is_readable(addr):
            raise MemReadLockedError((addr, addr))
        left, right = WordParser.get_field_spec(vmachine)
-       vmachine["cf"] = cmp(int(vmachine.registers[reg][left:right]),
+       vmachine.cf = cmp(int(vmachine.registers[reg][left:right]),
                             int(vmachine[addr][left:right]))
     return __cmp
 

@@ -15,7 +15,7 @@ def _get_device(vmachine):
 
 
 def ioc(vmachine):
-    vmachine["cycles"] += 1
+    vmachine.cycles += 1
     dev = _get_device(vmachine)
     if dev.busy:
         vmachine.jump_to = vmachine.cur_addr

@@ -1,22 +1,8 @@
 from vm_errors import *
-from execution import *
 from word_parser import *
 from word import *
 from opcodes import opcodes
 from registers import Registers
-
-
-TRIGGERS = ['cf', 'of', 'cur_addr', 'halted', 'cycles']
-"""
-Trying to document (reverse engenieer) those fields :
-cf: Seems to be the 'Comparison Field' named 'Comparison Indicator' by Knuth
-of: Seems to be the 'Overflow Field' named 'Overflow Toggle' by Knuth
-cur_addr: Initialised to start address, it's a pointer to the word currently
-          pointed by the machine.
-halted: As its name is verbose, a boolean storing the state of the machine, set
-        to True only by hlt
-cycles: A counter to store the number of units of time consumed
-"""
 
 class VMachine:
     MEMORY_SIZE = 4000
@@ -28,28 +14,16 @@ class VMachine:
 
     def __getitem__(self, x):
         """Can raise exception"""
-        if x in TRIGGERS:
-            return self.__dict__[x]
         return self.memory[x]
 
     def __setitem__(self, item, value):
         """Can raise exception"""
         old_value = self[item]
-        if isinstance(item, int):
-            # we are working with memory
-            self.memory[item] = value
-            if self.mem_hook is not None \
-                    and old_value.word_list != self.memory[item].word_list:
-                self.mem_hook(item, old_value, self.memory[item])
-        else:
-            # we are working with registers or triggers
-            if item in TRIGGERS:
-                self.__dict__[item] = value
-                changed = old_value != self[item]
-            else:  # register
-                raise Exception("Temporary exception for debug... you sould not \
-pass a non int here, please use \
-virt_machine.registers")
+        # we are working with memory
+        self.memory[item] = value
+        if self.mem_hook is not None \
+                and old_value.word_list != self.memory[item].word_list:
+            self.mem_hook(item, old_value, self.memory[item])
 
     @staticmethod
     def check_mem_addr(addr):
@@ -145,18 +119,18 @@ virt_machine.registers")
         f = current_word[4]
         op = opcodes.get(c, opcodes.get((c,f), None))
         self.jump_to = None
-        before_cycles = self["cycles"]
+        before_cycles = self.cycles
         op(self)
         if self.jump_to is None:
-            self["cur_addr"] += 1
+            self.cur_addr += 1
         else:
-            self["cur_addr"] = self.jump_to
-        return self["cycles"] - before_cycles
+            self.cur_addr = self.jump_to
+        return self.cycles - before_cycles
 
     def step(self):
         if not self.check_mem_addr(self.cur_addr):
             raise InvalidCurAddrError(self.cur_addr)
-        cycles = execute(self)
+        cycles = self.execute()
 
         # refresh all plugged devices
         for dev in self.devices.values():

@@ -6,7 +6,7 @@ from word_parser import *
 
 
 def _linear_manipulation(vmachine, reg, sign, inc_action):
-    vmachine["cycles"] += 1
+    vmachine.cycles += 1
     """Inc-Action is 1 or 0"""
     result = inc_action * int(vmachine.registers[reg]) + sign \
         * WordParser.get_full_addr(vmachine, check_overflow=True)
@@ -21,7 +21,7 @@ def _linear_manipulation(vmachine, reg, sign, inc_action):
     else:
         if abs(result) >= MAX_BYTE ** 2:
             result = Word.norm_2bytes(result)
-            vmachine["of"] = True
+            vmachine.of = True
         w_result = Word(result)
     vmachine.registers[reg] = w_result
 
