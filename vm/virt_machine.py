@@ -56,8 +56,8 @@ class VMachine:
             self[addr] = word
 
     def init_stuff(self, start_address):
-        self.rA, self.rX, self.rJ = [Word(0) for _ in xrange(3)]
-        self.r = [Word(0) for _ in xrange(7)]
+        self.rA, self.rX, self.rJ = [Word() for _ in xrange(3)]
+        self.r = [Word() for _ in xrange(7)]
         self.cf = 0
         self.of = False
         self.cur_addr = start_address

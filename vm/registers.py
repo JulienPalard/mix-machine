@@ -2,10 +2,10 @@ from word import *
 
 class Registers:
     def __init__(self):
-        self.rA = Word(0)
-        self.rX = Word(0)
-        self.rJ = Word(0)
-        self.r = [Word(0) for _ in xrange(7)]
+        self.rA = Word()
+        self.rX = Word()
+        self.rJ = Word()
+        self.r = [Word() for _ in xrange(7)]
 
     def __getitem__(self, r):
         if r == 'A':

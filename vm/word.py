@@ -81,12 +81,12 @@ class Word:
     def set(self, obj=None):
         if obj is None:
             self.word_list = [+1, 0, 0, 0, 0, 0]
-        elif isinstance(obj, list) or isinstance(obj, tuple):
-            self.word_list = list(obj)
         elif isinstance(obj, int) or isinstance(obj, long):
             self.word_list = self.from_dec(obj)
         elif isinstance(obj, Word):
             self.word_list = obj.word_list[:]
+        elif isinstance(obj, list) or isinstance(obj, tuple):
+            self.word_list = list(obj)
 
     def __init__(self, obj=None):
         self.set(obj)
