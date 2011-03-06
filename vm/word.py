@@ -22,8 +22,13 @@ class Word:
         return Word.sign(addr) * (abs(addr) % MAX_BYTE ** 2)
 
     def __int__(self):
-        return self.word_list[0] \
-            * reduce(lambda x, y: (x << 6) | y, self.word_list[1:], 0)
+        value = self.word_list[5] \
+            | self.word_list[4] << 6 \
+            | self.word_list[3] << 12 \
+            | self.word_list[2] << 18 \
+            | self.word_list[1] << 24
+
+        return value if self.word_list[0] == 1 else -value
 
     @staticmethod
     def is_word_list(word_list):
