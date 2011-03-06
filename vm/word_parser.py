@@ -10,7 +10,7 @@ class WordParser:
         ind = word[3]
         if ind > 6:
             raise InvalidIndError(ind)
-        addr += int(vmachine.registers[ind]) #int(vmachine[str(ind)])
+        addr += int(vmachine.registers.r[ind])
         if abs(addr) >= MAX_BYTE ** 2:
             addr = Word.norm_2bytes(addr)
             if check_overflow:
