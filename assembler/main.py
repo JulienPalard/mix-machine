@@ -14,7 +14,7 @@ import sys
 from parse_line import parse_lines
 from assemble import Assembler
 from memory import Memory
-#from listing import *
+import errors
 
 
 DEFAULT_OUT_NAME = "out.ma"
@@ -45,41 +45,42 @@ def parse_args():
     try:
         file_in = open(sys.argv[1], "r")
     except IOError, (errno, strerror):
-        print "%s (%s): %s" % (ERR_INVALID_INPUT_FILE[1],
+        print "%s (%s): %s" % (errors.ERR_INVALID_INPUT_FILE[1],
                                sys.argv[1], strerror)
-        sys.exit(ERR_INVALID_INPUT_FILE[0])
+        sys.exit(errors.ERR_INVALID_INPUT_FILE[0])
     try:
         file_out = open(sys.argv[2] if arg_number == 2
                                     else DEFAULT_OUT_NAME, 'w')
     except IOError, (errno, strerror):
         file_in.close()
-        print "%s (%s): %s" % (ERR_INVALID_OUTPUT_FILE[1],
+        print "%s (%s): %s" % (errors.ERR_INVALID_OUTPUT_FILE[1],
                                sys.argv[2] if arg_number == 2
                                            else DEFAULT_OUT_NAME,
                                strerror)
-        sys.exit(ERR_INVALID_OUTPUT_FILE[0])
+        sys.exit(errors.ERR_INVALID_OUTPUT_FILE[0])
     return file_in, file_out
+
 
 def main():
     file_in, file_out = parse_args()
     src_lines = file_in.readlines()
-    lines, errors = parse_lines(src_lines)
+    lines, err = parse_lines(src_lines)
     file_in.close()
-    if len(errors) > 0:
+    if len(err) > 0:
         print "Syntax errors:"
-        print_errors(errors)
+        print_errors(err)
         file_out.close()
-        return ERR_SYNTAX[0]
+        return errors.ERR_SYNTAX[0]
     asm = Assembler()
     asm.run(lines)
     memory_table = asm.memory
     start_address = asm.start_address
-    errors = asm.errors
-    if len(errors) > 0:
+    err = asm.errors
+    if len(err) > 0:
         print "Assemble errors:"
-        print_errors(errors)
+        print_errors(err)
         file_out.close()
-        return ERR_ASSEMBLE[0]
+        return errors.ERR_ASSEMBLE[0]
     if start_address is not None:
         print "Start address: %04i" % start_address
     if memory_table is not None:
