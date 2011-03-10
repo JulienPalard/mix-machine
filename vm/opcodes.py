@@ -1,12 +1,12 @@
-from exec_addr_manipulation import *    
-from exec_cmp import *                  
-from exec_load import *                 
+from exec_addr_manipulation import *
+from exec_cmp import *
+from exec_load import *
 from exec_others import *
-from exec_store import *                
-from exec_math import *                 
-from exec_shift import *                
-from exec_jump import *                 
-from exec_io import *                   
+from exec_store import *
+from exec_math import *
+from exec_shift import *
+from exec_jump import *
+from exec_io import *
 
 opcodes = {
     (0): nop,
