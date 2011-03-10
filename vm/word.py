@@ -5,6 +5,21 @@ MAX_BYTE = 64
 
 
 class Word:
+    """
+    A Word defines a unit of memory of 6 bytes. One byte can store
+    at least 64 values, so no program should assume that a MIX
+    machine can addresses more than 64 values per byte.
+    (See Vol.1 third edition page 125, chapter 1.3.1)
+
+    A word can be an instruction as the 6 bytes are :
+    [+-][A][A][I][F][C]
+    [+-]: The sign is stored as +1 or -1
+    [+-][A][A]: Is the address
+    [I]: Is the index specification used to modify the effective address
+    [F]: The modification for the operation code
+    [C]: The operation code to be performed
+    """
+
     @staticmethod
     def sign(x):
         return 1 if x >= 0 else -1
