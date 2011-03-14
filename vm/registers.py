@@ -1,7 +1,8 @@
 from word import *
 
 class Registers:
-    def __init__(self):
+    def __init__(self, cpu_hook):
+        self.cpu_hook = cpu_hook
         self.rA = Word()
         self.rX = Word()
         self.rJ = Word()
@@ -18,17 +19,30 @@ class Registers:
             return self.r[r]
 
     def __setitem__(self, x, value):
-        if x == 'A':
-            self.rA = Word(value)
-        elif x == 'X':
-            self.rX = Word(value)
-        elif x == 'J':
-            self.rJ = Word(value)
+        if self.cpu_hook is None:
+            if x == 'A':
+                self.rA = Word(value)
+            elif x == 'X':
+                self.rX = Word(value)
+            elif x == 'J':
+                self.rJ = Word(value)
+            else:
+                self.r[x] = Word(value)
         else:
-            self.r[x] = Word(value)
-        #TODO: Hum, I broke this hook splitting this code in registers.py
-        #old_value = self[item]
-        #changed = old_value.word_list != self[item].word_list
-        #if self.cpu_hook is not None and changed:
-        #    self.cpu_hook(item, old_value, self[item])
+            if x == 'A':
+                old = self.rA
+                self.rA = Word(value)
+                self.cpu_hook('rA', old, self.rA)
+            elif x == 'X':
+                old = self.rX
+                self.rX = Word(value)
+                self.cpu_hook('rX', old, self.rX)
+            elif x == 'J':
+                old = self.rJ
+                self.rJ = Word(value)
+                self.cpu_hook('rJ', old, self.rJ)
+            else:
+                old = self.r[x]
+                self.r[x] = Word(value)
+                self.cpu_hook('r%d' % x, old, self.r[x])
 

@@ -100,10 +100,11 @@ class VMachine:
 
     def __init__(self, memory, start_address):
         self.errors = []
-        self.registers = Registers()
+        self.registers = Registers(None)
         self.set_cpu_hook(None)
         self.set_mem_hook(None)
         self.set_lock_hook(None)
+        self.set_op_hook(None)
         self.set_memory(memory, reset=True)
         self.init_stuff(start_address)
         self.devices = {}
@@ -120,6 +121,8 @@ class VMachine:
         op = opcodes.get(c, opcodes.get((c,f), None))
         self.jump_to = None
         before_cycles = self.cycles
+        if self.op_hook is not None:
+            self.op_hook(op.__name__, current_word)
         op(self)
         if self.jump_to is None:
             self.cur_addr += 1
@@ -151,6 +154,14 @@ class VMachine:
 
     def set_cpu_hook(self, hook):
         self.cpu_hook = hook
+        self.registers.cpu_hook = hook
+
+    def set_op_hook(self, hook):
+        self.op_hook = hook
+
+    def memory_changed(self, addr):
+        if self.mem_hook is not None:
+            self.mem_hook(addr, None, self[addr])
 
     def set_mem_hook(self, hook):
         self.mem_hook = hook

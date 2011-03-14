@@ -10,14 +10,21 @@ class MixMachine:
     MixMachine is an abstraction of the virt_machine, making it easyly usable
     in the Python's REPL like :
 
-    >>> from mix_machine import MixMachine
-    >>> m = MixMachine('some compiled file')
+    >>> import mix_machine
+    >>> m = mix_machine.MixMachine('/tmp/a.out')
+    >>> m.debug()
     >>> m.step()
-    >>> print m.vmachine.registers.r[0]
-    + 00 00 00 00 00
-    >>> print m.vmachine.registers.rA
-    + 00 00 00 00 00
+    enta : [+ 00 00 00 02 48]
+    rA = [+ 00 00 00 00 00]
     >>> m.step()
+    sta : [+ 00 00 00 05 24]
+    memory[0] = + 00 00 00 00 00
+    >>> print m.vmachine.cur_addr
+    3002
+    >>> m.vmachine.cur_addr = 3001
+    >>> m.step()
+    sta : [+ 00 00 00 05 24]
+    memory[0] = + 00 00 00 00 00
     """
 
     printer_unit = 18
@@ -45,15 +52,19 @@ class MixMachine:
         self.vmachine.set_cpu_hook(self.cpu_hook)
         self.vmachine.set_mem_hook(self.mem_hook)
         self.vmachine.set_lock_hook(self.lock_hook)
+        self.vmachine.set_op_hook(self.op_hook)
 
     def cpu_hook(self, item, old, new):
-        print "CPU : %s %s %s" % (str(item), str(old), str(new))
+        print "%s = [%s]" % (str(item), str(new))
 
     def mem_hook(self, item, old, new):
-        print "MEM : %s %s %s" % (str(item), str(old), str(new))
+        print "memory[%s] = %s" % (str(item), str(new))
 
     def lock_hook(self, item, old, new):
-        print "LOCK : %s %s %s" % (str(item), str(old), str(new))
+        print "LOCK[%s] %s -> %s" % (str(item), str(old), str(new))
+
+    def op_hook(self, op, word):
+        print "%s : [%s]" % (op, str(word))
 
     def step(self):
         try:

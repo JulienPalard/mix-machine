@@ -63,6 +63,7 @@ def move(vmachine):
     try:
         for i in xrange(num):
             vmachine[dst] = vmachine[src + i]
+            vmachine.memory_changed(dst)
             # dst - like r1 always contains address of next destination word
             dst += 1
             vmachine.cycles += 2

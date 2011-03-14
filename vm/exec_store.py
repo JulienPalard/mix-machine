@@ -15,6 +15,7 @@ def _st(vmachine, reg):
     vmachine[addr][max(1, left):right] = src[1:5]
     if left == 0:
         vmachine[addr][0:0] = src[0]
+    vmachine.memory_changed(addr)
 
 
 def sta(vmachine):

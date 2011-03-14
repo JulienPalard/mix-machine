@@ -50,6 +50,7 @@ def in_(vmachine):
     for i in xrange(words_num):
         # +1 added like a sign to word
         vmachine[addr + i][1:5] = [+1] + bytes[5 * i: 5 * (i + 1)]
+        vmachine.memory_changed(addr + i)
     # and lock memory for any actions
     vmachine.lock_cells(vmachine.RW_LOCKED,
                         add=set(range(addr, addr + words_num)))
