@@ -5,12 +5,19 @@ from word import *
 class WordParser:
     @staticmethod
     def get_full_addr(vmachine, check_overflow=False, check_mix_addr=False):
+        """
+        This returns the 'M' (memory cell / memory location) as described in
+        Knuth's book, page 127.
+        M = AA + r[i] (i, the index specification)
+        The +AA part is not modified if i is 0.
+        """
         word = vmachine.get_cur_word()
         addr = int(word[0:2])
         ind = word[3]
         if ind > 6:
             raise InvalidIndError(ind)
-        addr += int(vmachine.registers.r[ind])
+        if ind > 0:
+            addr += int(vmachine.registers.r[ind])
         if abs(addr) >= MAX_BYTE ** 2:
             addr = Word.norm_2bytes(addr)
             if check_overflow:
