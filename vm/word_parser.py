@@ -14,8 +14,6 @@ class WordParser:
         word = vmachine.get_cur_word()
         addr = int(word[0:2])
         ind = word[3]
-        if ind > 6:
-            raise InvalidIndError(ind)
         if ind > 0:
             addr += int(vmachine.registers.r[ind])
         if abs(addr) >= MAX_BYTE ** 2:
